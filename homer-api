@@ -1,0 +1,33 @@
+#!/bin/sh
+
+ADDONDIR=/usr/local/etc/config/addons/www/homer-api
+
+case "$1" in
+
+  ""|start|restart|stop)
+    exit 0
+    ;;
+
+  info)
+    VER=`cat $ADDONDIR/VERSION`
+    echo "Info: <b>Home Remote OpenAPI 3.0 CCU Addon</b><br>"
+    echo "Info: <a href="https://github.com/methodus/homematic_openapi">https://github.com/methodus/homematic_openapi</a>"
+    echo "Name: Home Remote OpenAPI 3.0"
+    echo "Version: $VER"
+    echo "Operations: uninstall"
+    echo "Config-Url: /addons/homer-api"
+    echo "Update: /addons/homer-api/update-check.cgi"
+  ;;
+
+  uninstall)
+    rm -r $ADDONDIR
+  ;;
+
+  *)
+    echo "Usage: homer-api {info|uninstall}" >&2
+    exit 1
+  ;;
+
+esac
+
+exit 0

@@ -1,0 +1,97 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "This is yet another Homematic API addon, which tries to provide as much as Web-UI functionalities.",
+    "version": "0.0.1",
+    "title": "Homematic OpenAPI",
+    "termsOfService": "https://apps.denis-loh.com",
+    "contact": {
+      "email": "support@denis-loh.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "tags": [
+    {
+      "name": "devices",
+      "description": "Everything about your Homematic Devices"
+    },
+    {
+      "name": "favorites",
+      "description": "Manage your favorite channels"
+    },
+    {
+      "name": "rooms",
+      "description": "Manage your room devices"
+    },
+    {
+      "name": "CCU",
+      "description": "Manage CCU settings"
+    },
+    {
+      "name": "user",
+      "description": "Operations about user"
+    }
+  ],
+  "paths": {
+    "/devices": {
+      "summary": "Lists all devices",
+      "get": {
+        "summary": "Lists all devices",
+        "description": "Lists all registered devices of your CCU.",
+        "operationId": "",
+        "responses": {
+          "default": {
+            "description": "Default error sample response"
+          }
+        },
+        "tags": [
+          "devices"
+        ]
+      }
+    },
+    "/devices/{deviceId}": {
+      "get": {
+        "summary": "Returns detailed information about a device",
+        "description": "This returns detailed information about a specific device including all its channels",
+        "operationId": "",
+        "responses": {
+          "default": {
+            "description": "Default error sample response"
+          }
+        },
+        "tags": [
+          "devices"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "deviceId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "ISE ID of the device to get"
+          }
+        ]
+      }
+    },
+    "/devices/teach": {
+      "post": {
+        "summary": "Start teaching process",
+        "description": "This operation starts the teaching process to find and learn new devices",
+        "operationId": "",
+        "responses": {
+          "default": {
+            "description": "Default error sample response"
+          }
+        },
+        "tags": [
+          "devices"
+        ]
+      }
+    }
+  }
+}
