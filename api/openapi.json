@@ -33,6 +33,10 @@
     {
       "name": "user",
       "description": "Operations about user"
+    },
+    {
+      "name": "general",
+      "description": "General operations"
     }
   ],
   "paths": {
@@ -43,38 +47,30 @@
         "description": "Lists all registered devices of your CCU.",
         "operationId": "",
         "responses": {
-          "default": {
-            "description": "Default error sample response"
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "devices": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/device"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500internal"
           }
         },
         "tags": [
           "devices"
-        ]
-      }
-    },
-    "/devices/{deviceId}": {
-      "get": {
-        "summary": "Returns detailed information about a device",
-        "description": "This returns detailed information about a specific device including all its channels",
-        "operationId": "",
-        "responses": {
-          "default": {
-            "description": "Default error sample response"
-          }
-        },
-        "tags": [
-          "devices"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "deviceId",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "description": "ISE ID of the device to get"
-          }
         ]
       }
     },
@@ -91,6 +87,51 @@
         "tags": [
           "devices"
         ]
+      }
+    },
+    "/version": {
+      "get": {
+        "summary": "Gets the version of the API",
+        "description": "Gets the current version of this addon and its corresponding API",
+        "operationId": "",
+        "responses": {
+          "default": {
+            "description": "Default error sample response"
+          }
+        },
+        "tags": [
+          "general"
+        ]
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "500internal": {
+        "description": "Internal Server Error"
+      }
+    },
+    "schemas": {
+      "device": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "interface": {
+            "type": "string"
+          }
+        }
       }
     }
   }
