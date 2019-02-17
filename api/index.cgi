@@ -18,7 +18,7 @@ if { [catch {
   array set operation [openapi::matchResourcePath $resource]
   source [file join "operations/" $operation($method)]
 } err ] } {
-  if { [catch { array set errDetails $err } err2] } {
+  if { [catch { array set errDetails $err } err2] || 0 == [info exists errDetails(CODE)] } {
     set code 500
     set status "Internal Server Error"
     set message "$status: $err"

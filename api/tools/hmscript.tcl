@@ -19,7 +19,7 @@ namespace eval hmscript {
     if { [catch { array set result [rega_script $_script_] } err ] } {
       return $err
     } else {
-      if { [info exists result(ERROR)] } {
+      if { [info exists result(ERROR)] && $result(ERROR) != "" } {
         return -code error $result(ERROR)
       }
 

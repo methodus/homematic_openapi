@@ -24,19 +24,12 @@ namespace eval openapi {
   proc matchResourcePath { path } {
     variable operations
     foreach name [array names operations] {
-      if { 0 != [_matchPath $path $name] } {
+      if { 0 != [string match $name $path] } {
         return $operations($name)
       }
     }
 
     return -code error [createError 400 "Bad request" "Operation for $path not found"]
-  }
-
-  proc _matchPath { path pattern } {
-    if { "*" != [string index $pattern end] } {
-      append pattern *
-    }
-    return [string match $pattern $path]
   }
 
   proc _loadFile {filename} {
