@@ -13,6 +13,14 @@ namespace eval openapi {
     array set operations [_loadFile $fname]
   }
 
+  proc createError { code status message } {
+    set error {}
+    lappend error CODE $code
+    lappend error STATUS $status
+    lappend error MESSAGE $message
+    return $error
+  }
+
   proc matchResourcePath { path } {
     variable operations
     foreach name [array names operations] {
@@ -21,7 +29,7 @@ namespace eval openapi {
       }
     }
 
-    return -code error "Operation for $path not found"
+    return -code error [createError 400 "Bad request" "Operation for $path not found"]
   }
 
   proc _matchPath { path pattern } {

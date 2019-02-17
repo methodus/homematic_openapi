@@ -39,6 +39,18 @@
       "description": "General operations"
     }
   ],
+  "servers": [
+    {
+      "url": "http://{myHomematic}/addons/homer/api",
+      "description": "Homematic CCU Host",
+      "variables": {
+        "myHomematic": {
+          "default": "homematic",
+          "description": "Hostname or IP of your CCU"
+        }
+      }
+    }
+  ],
   "paths": {
     "/devices": {
       "summary": "Lists all devices",
@@ -52,15 +64,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "devices": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/device"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/devices"
                 }
               }
             }
@@ -89,14 +93,71 @@
         ]
       }
     },
+    "/rooms": {
+      "get": {
+        "summary": "Lists all rooms",
+        "description": "Lists all rooms and its channels",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/rooms"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500internal"
+          }
+        },
+        "tags": [
+          "rooms"
+        ]
+      }
+    },
+    "/favorites": {
+      "get": {
+        "summary": "Lists all favorites",
+        "description": "Lists all favorites and its channels",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/favorites"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500internal"
+          }
+        },
+        "tags": [
+          "favorites"
+        ]
+      }
+    },
     "/version": {
       "get": {
         "summary": "Gets the version of the API",
         "description": "Gets the current version of this addon and its corresponding API",
         "operationId": "",
         "responses": {
-          "default": {
-            "description": "Default error sample response"
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/version"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -112,12 +173,30 @@
       }
     },
     "schemas": {
+      "version": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "devices": {
+        "type": "object",
+        "properties": {
+          "devices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/device"
+            }
+          }
+        }
+      },
       "device": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           },
           "name": {
             "type": "string"
@@ -129,6 +208,90 @@
             "type": "string"
           },
           "interface": {
+            "type": "string"
+          }
+        }
+      },
+      "favorites": {
+        "type": "object",
+        "properties": {
+          "favorites": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/favorite"
+            }
+          }
+        }
+      },
+      "favorite": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/favChannel"
+            }
+          }
+        }
+      },
+      "favChannel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "usable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "rooms": {
+        "type": "object",
+        "properties": {
+          "rooms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/room"
+            }
+          }
+        }
+      },
+      "room": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/channel"
+            }
+          }
+        }
+      },
+      "channel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
             "type": "string"
           }
         }

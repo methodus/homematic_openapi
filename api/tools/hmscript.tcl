@@ -16,17 +16,15 @@ namespace eval hmscript {
 
     append _script_ $script
 
-    return [_run _script_]
+    if { [catch { array set result [rega_script $_script_] } err ] } {
+      return $err
+    } else {
+      if { [info exists result(ERROR)] } {
+        return -code error $result(ERROR)
+      }
 
-  }
-
-  proc _run { p_script } {
-    upvar $p_script script
-    catch {
-      array set result [rega_script $script]
       return $result(STDOUT)
-    } err
-    return $err
+    }
   }
 
   proc escapeString { str } {

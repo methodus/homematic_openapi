@@ -1,69 +1,48 @@
 #!/bin/tclsh
 
-proc get_devices {} {
-  set hm_script ""
-  append hm_script {
+set hm_script ""
+append hm_script {
 
-    integer DIR_SENDER      = 1;
-    integer DIR_RECEIVER    = 1;
-    string PARTNER_INVALID  = "65535";
+  integer DIR_SENDER      = 1;
+  integer DIR_RECEIVER    = 1;
+  string PARTNER_INVALID  = "65535";
 
-    string sDeviceId;
-    string sChnannelId;
-    string sDPID;
+  string sDeviceId;
+  string sChnannelId;
+  string sDPID;
 
-    WriteLine("{ \"devices\" : " # '[');
+  WriteLine("{ \"devices\" : " # '[');
 
-    boolean bFirstDevice = true;
-    foreach (sDeviceId, root.Devices().EnumUsedIDs()) {
-      object oDevice = dom.GetObject(sDeviceId);
-      boolean bDeviceReady = oDevice.ReadyConfig();
+  boolean bFirstDevice = true;
+  foreach (sDeviceId, root.Devices().EnumUsedIDs()) {
+    object oDevice = dom.GetObject(sDeviceId);
+    boolean bDeviceReady = oDevice.ReadyConfig();
 
-      if ((true == bDeviceReady) && ("HMW-RCV-50" != oDevice.HssType()) && ("HM-RCV-50" != oDevice.HssType())) {
-        string sDeviceIfaceId = oDevice.Interface();
-        string sDeviceIface   = dom.GetObject(sDeviceIfaceId).Name();
-        string sDeviceType    = oDevice.HssType();
+    if ((true == bDeviceReady) && ("HMW-RCV-50" != oDevice.HssType()) && ("HM-RCV-50" != oDevice.HssType())) {
+      string sDeviceIfaceId = oDevice.Interface();
+      string sDeviceIface   = dom.GetObject(sDeviceIfaceId).Name();
+      string sDeviceType    = oDevice.HssType();
 
-        if (!bFirstDevice) {
-          WriteLine(",");
-        } else {
-          bFirstDevice = false;
-        }
-
-        WriteLine("{");
-        WriteLine("\"name\" : \"" # oDevice.Name() # "\"," );
-        WriteLine("\"address\" : \"" # oDevice.Address() # "\"," );
-        WriteLine("\"id\" : \"" # sDeviceId # "\"," );
-        WriteLine("\"interface\" : \"" # sDeviceIface # "\"," );
-        WriteLine("\"type\" : \"" # sDeviceType # "\"" );
-        WriteLine("}");
+      if (!bFirstDevice) {
+        WriteLine(",");
+      } else {
+        bFirstDevice = false;
       }
+
+      WriteLine("{");
+      WriteLine("\"name\" : \"" # oDevice.Name() # "\"," );
+      WriteLine("\"address\" : \"" # oDevice.Address() # "\"," );
+      WriteLine("\"id\" : \"" # sDeviceId # "\"," );
+      WriteLine("\"interface\" : \"" # sDeviceIface # "\"," );
+      WriteLine("\"type\" : \"" # sDeviceType # "\"" );
+      WriteLine("}");
     }
-
-    WriteLine("]");
-    WriteLine("}");
-
   }
 
-  return [hmscript::run $hm_script]
+  WriteLine("]");
+  WriteLine("}");
 
 }
 
-set output ""
-
-catch {
-  set method [httptool::request::method]
-  switch $method {
-    GET {
-      array set params [httptool::request::parseQuery]
-      if { [info exists params(id)] } {
-        #set output [get_device $params(id)]
-        set output [get_devices]
-      } else {
-        set output [get_devices]
-      }
-    }
-  }
-} err
-
+set output [hmscript::run $hm_script]
 httptool::response::send $output

@@ -41,7 +41,7 @@ namespace eval JSON {
       foreach { elem value } $job {
         if {0 != [regexp "^(\[\\w]*)#(\[BSAND])" $elem key match type]} {
           switch $type {
-            S { lappend array "\"$match\" : \"$value\"" }
+            S { lappend array "\"$match\" : [_toString $value]" }
             B -
             N { lappend array "\"$match\" : $value" }
             A { lappend array [toJSON $value $key] }
@@ -57,6 +57,20 @@ namespace eval JSON {
       append json $closeBracket
 
       return $json
+    }
+
+    proc _toString { str } {
+      set map {
+        "\"" "\\\""
+        "\\" "\\\\"
+        "/"  "\\/"
+        "\b"  "\\b"
+        "\f"  "\\f"
+        "\n"  "\\n"
+        "\r"  "\\r"
+        "\t"  "\\t"
+      }
+      return "\"[string map $map $str]\""
     }
 
     proc _getc { p_text {mode 0} } {
