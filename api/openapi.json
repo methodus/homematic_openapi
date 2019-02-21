@@ -19,6 +19,10 @@
       "description": "Everything about your Homematic Devices"
     },
     {
+      "name": "channels",
+      "description": "Everything about the channels"
+    },
+    {
       "name": "favorites",
       "description": "Manage your favorite channels"
     },
@@ -27,21 +31,13 @@
       "description": "Manage your room devices"
     },
     {
-      "name": "CCU",
-      "description": "Manage CCU settings"
-    },
-    {
-      "name": "user",
-      "description": "Operations about user"
-    },
-    {
       "name": "general",
       "description": "General operations"
     }
   ],
   "servers": [
     {
-      "url": "http://{myHomematic}/addons/homer/api",
+      "url": "http://{myHomematic}/addons/homer-api",
       "description": "Homematic CCU Host",
       "variables": {
         "myHomematic": {
@@ -53,7 +49,6 @@
   ],
   "paths": {
     "/devices": {
-      "summary": "Lists all devices",
       "get": {
         "summary": "Lists all devices",
         "description": "Lists all registered devices of your CCU.",
@@ -78,18 +73,94 @@
         ]
       }
     },
-    "/devices/teach": {
-      "post": {
-        "summary": "Start teaching process",
-        "description": "This operation starts the teaching process to find and learn new devices",
+    "/devices/{deviceId}": {
+      "get": {
+        "summary": "Get specific device",
+        "description": "Gets all information about a specific device",
         "operationId": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "deviceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
-          "default": {
-            "description": "Default error sample response"
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/device"
+                }
+              }
+            }
           }
         },
         "tags": [
           "devices"
+        ]
+      }
+    },
+    "/channels": {
+      "get": {
+        "summary": "Lists all channels",
+        "description": "Lists all channels regardless of the device they belong to",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "channels": {
+                      "$ref": "#/components/schemas/channels"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "channels"
+        ]
+      }
+    },
+    "/channels/{channelId}": {
+      "get": {
+        "summary": "All information about a specific channel",
+        "description": "Returns all information about a specific channel",
+        "operationId": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/channel"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "channels"
         ]
       }
     },
@@ -111,6 +182,142 @@
           },
           "500": {
             "$ref": "#/components/responses/500internal"
+          }
+        },
+        "tags": [
+          "rooms"
+        ]
+      },
+      "post": {
+        "summary": "Create a new room",
+        "description": "Creates a new room",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/room"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400badRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/500internal"
+          }
+        },
+        "tags": [
+          "rooms"
+        ]
+      }
+    },
+    "/rooms/{roomId}": {
+      "get": {
+        "summary": "Get a specific room",
+        "description": "Returns the specified room",
+        "operationId": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/room"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          }
+        },
+        "tags": [
+          "rooms"
+        ]
+      },
+      "delete": {
+        "summary": "Deletes the room",
+        "description": "Deletes the specified room",
+        "operationId": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204noContent"
+          },
+          "400": {
+            "$ref": "#/components/responses/400badRequest"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500internal"
+          }
+        },
+        "tags": [
+          "rooms"
+        ]
+      },
+      "patch": {
+        "summary": "Edit the room",
+        "description": "allows to change the name and description of a specified room",
+        "operationId": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Parameters to change for the room",
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/patchRoom"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204noContent"
+          },
+          "400": {
+            "$ref": "#/components/responses/400badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
           }
         },
         "tags": [
@@ -168,6 +375,18 @@
   },
   "components": {
     "responses": {
+      "204noContent": {
+        "description": "No Content"
+      },
+      "400badRequest": {
+        "description": "Bad Request"
+      },
+      "403forbidden": {
+        "description": "Forbidden"
+      },
+      "404notFound": {
+        "description": "Not Found"
+      },
       "500internal": {
         "description": "Internal Server Error"
       }
@@ -277,12 +496,29 @@
           "name": {
             "type": "string"
           },
+          "description": {
+            "type": "string"
+          },
           "channels": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/channel"
-            }
+            "$ref": "#/components/schemas/channels"
           }
+        }
+      },
+      "patchRoom": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "channels": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/channel"
         }
       },
       "channel": {

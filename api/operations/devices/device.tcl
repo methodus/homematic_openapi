@@ -9,23 +9,10 @@ set hm_script {
     quit;
   }
 
-  boolean bDeviceReady = oDevice.ReadyConfig();
-
-  if ((true == bDeviceReady) && ("HMW-RCV-50" != oDevice.HssType()) && ("HM-RCV-50" != oDevice.HssType())) {
-    string sDeviceIfaceId = oDevice.Interface();
-    string sDeviceIface   = dom.GetObject(sDeviceIfaceId).Name();
-    string sDeviceType    = oDevice.HssType();
-
-    WriteLine("{");
-    WriteLine("\"name\" : \"" # oDevice.Name() # "\"," );
-    WriteLine("\"address\" : \"" # oDevice.Address() # "\"," );
-    WriteLine("\"id\" : \"" # sDeviceId # "\"," );
-    WriteLine("\"interface\" : \"" # sDeviceIface # "\"," );
-    WriteLine("\"type\" : \"" # sDeviceType # "\"" );
-    WriteLine("}");
-  }
-
+  boolean bFirstDevice = true;
 }
+
+append hm_script [file::load "operations/devices/device.hms"]
 
 if {0 != [regexp $operation(REGEXP) $resource path id]} {
   set args(sDeviceId) $id
