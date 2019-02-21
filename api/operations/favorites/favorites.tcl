@@ -1,7 +1,6 @@
 #!/bin/tclsh
 
-set hm_script ""
-append hm_script {
+set hm_script {
 
   object oFavorite;
   string sFavoriteId;

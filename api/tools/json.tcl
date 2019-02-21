@@ -117,7 +117,7 @@ namespace eval JSON {
             set value [_parseValue text]
             set c     [_getc text -nospace]
 
-            lappend object $name\#$type $value
+            lappend object $name $value
           }
         }
       } else {
@@ -146,7 +146,7 @@ namespace eval JSON {
       if { "\]" != [_preview text -nospace] } then {
         while { "," == $c } {
           set type [_parseType text]
-          lappend values $type [_parseValue text]
+          lappend values [_parseValue text]
           set c [_getc text -nospace]
         }
       } else {

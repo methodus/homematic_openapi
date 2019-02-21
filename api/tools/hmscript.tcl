@@ -4,6 +4,18 @@ load tclrega.so
 namespace eval hmscript {
 
   proc run { script { p_args - }} {
+    if { "-" != $p_args } then {
+      upvar $p_args args
+
+      array set result [runWithResult $script args]
+    } else {
+      array set result [runWithResult $script]
+    }
+    
+    return $result(STDOUT)
+  }
+
+  proc runWithResult { script { p_args - }} {
     set _script_ ""
 
     if { "-" != $p_args } then {
@@ -16,14 +28,15 @@ namespace eval hmscript {
 
     append _script_ $script
 
-    if { [catch { array set result [rega_script $_script_] } err ] } {
+    if { [catch { set res [rega_script $_script_] } err ] } {
       return $err
     } else {
+      array set result $res
       if { [info exists result(ERROR)] && $result(ERROR) != "" } {
         return -code error $result(ERROR)
       }
 
-      return $result(STDOUT)
+      return $res
     }
   }
 

@@ -1,7 +1,6 @@
 #!/bin/tclsh
 
-set hm_script ""
-append hm_script {
+set hm_script {
 
   integer DIR_SENDER      = 1;
   integer DIR_RECEIVER    = 1;

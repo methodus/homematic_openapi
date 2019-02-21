@@ -8,21 +8,32 @@ namespace eval httptool {
 
   namespace eval request {
 
+    proc _parseUrlEncodedParameters { input } {
+      set list ""
+      catch {
+        set pairs [split $input &]
+        foreach pair $pairs {
+          if {0 != [regexp "^(\[^=]*)=(.*)$" $pair dummy varname val]} {
+            lappend list $varname $val
+          }
+        }
+      }
+      return $list
+    }
+
     ##
     # Parse GET query parameters
     ##
     proc parseQuery {  } {
-        set list ""
-        catch {
-            set input $::env(QUERY_STRING)
-            set pairs [split $input &]
-            foreach pair $pairs {
-                if {0 != [regexp "^(\[^=]*)=(.*)$" $pair dummy varname val]} {
-                    lappend list $varname $val
-                }
-            }
-        }
-        return $list
+      return [_parseUrlEncodedParameters $::env(QUERY_STRING)]
+    }
+
+    proc parsePost { } {
+      set list {}
+      catch {
+        set list [_parseUrlEncodedParameters [read stdin $::env(CONTENT_LENGTH)]]
+      }
+      return $list
     }
 
     proc method {} {
@@ -42,6 +53,10 @@ namespace eval httptool {
       return $resource
     }
 
+    proc resolvePath { resourcePath } {
+      return "[file dirname $::env(SCRIPT_NAME)]$resourcePath"
+    }
+
   }
 
   namespace eval response {
@@ -56,13 +71,27 @@ namespace eval httptool {
     ##
     # Sendet eine JSON Antwort unter Angabe von HTTP-Statuscode und Statusmeldung
     ##
-    proc sendWithStatus {code status arg} {
-      set output [encoding convertfrom utf-8 $arg]
+    proc sendWithStatus {code status { arg - }} {
+      set headers {}
+      sendWithStatusAndHeaders $code $status $headers $arg
+    }
+
+    proc sendWithStatusAndHeaders {code status p_headers { arg - }} {
+      array set headers $p_headers
 
       puts "Status: $code $status"
-      puts "Content-Type: application/json;Charset=UTF-8"
-      puts ""
-      puts $output
+      foreach name [array names headers] {
+        puts "$name: $headers($name)"
+      }
+
+      if { $arg != "-" } {
+        puts "Content-Type: application/json;Charset=UTF-8"
+        set output [encoding convertfrom utf-8 $arg]
+        puts ""
+        puts $output
+      } else {
+        puts ""
+      }
     }
 
   }

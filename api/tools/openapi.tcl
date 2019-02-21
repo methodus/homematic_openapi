@@ -10,7 +10,7 @@ namespace eval openapi {
 
   proc loadOperations { fname } {
     variable operations
-    array set operations [_loadFile $fname]
+    array set operations [file::load $fname]
   }
 
   proc createError { code status message } {
@@ -30,18 +30,6 @@ namespace eval openapi {
     }
 
     return -code error [createError 400 "Bad request" "Operation for $path not found"]
-  }
-
-  proc _loadFile {filename} {
-    set content ""
-    set fd -1
-  
-    catch { set fd [open $filename r] }
-    if { 0 <= $fd } then {
-      set content [read $fd]
-      close $fd
-    }
-    return $content
   }
 
 }

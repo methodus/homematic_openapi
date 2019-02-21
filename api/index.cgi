@@ -4,6 +4,7 @@
 # Load modules #
 ################
 source /www/once.tcl
+sourceOnce tools/file.tcl
 sourceOnce tools/json.tcl
 sourceOnce tools/http.tcl
 sourceOnce tools/openapi.tcl
@@ -16,7 +17,7 @@ if { [catch {
   openapi::loadOperations operations.conf
 
   array set operation [openapi::matchResourcePath $resource]
-  source [file join "operations/" $operation($method)]
+  source [file join "operations/" "$operation($method).tcl"]
 } err ] } {
   if { [catch { array set errDetails $err } err2] || 0 == [info exists errDetails(CODE)] } {
     set code 500
