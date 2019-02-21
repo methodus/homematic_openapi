@@ -1,0 +1,14 @@
+WriteLine("{");
+WriteLine("\"name\" : \"" # oChannel.Name() # "\"," );
+WriteLine("\"id\" : \"" # oChannel.ID() # "\"," );
+WriteLine("\"deviceId\" : \"" # oChannel.Device() # "\"," );
+
+string sDeviceIfaceId = oChannel.Interface();
+string sDeviceIface = "";
+if (sDeviceIfaceId != INVALID_ID) {
+  sDeviceIface = dom.GetObject(sDeviceIfaceId).Name();
+}
+WriteLine("\"interface\" : \"" # sDeviceIface # "\"," );
+
+WriteLine("\"address\" : \"" # oChannel.Address() # "\"" );
+WriteLine("}");
