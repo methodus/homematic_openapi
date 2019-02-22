@@ -31,6 +31,14 @@
       "description": "Manage your room devices"
     },
     {
+      "name": "functions",
+      "description": "Manage your device functions"
+    },
+    {
+      "name": "programs",
+      "description": "Programs and Scripts on the CCU"
+    },
+    {
       "name": "general",
       "description": "General operations"
     }
@@ -157,6 +165,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
           }
         },
         "tags": [
@@ -216,20 +230,20 @@
       }
     },
     "/rooms/{roomId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "roomId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "get": {
         "summary": "Get a specific room",
         "description": "Returns the specified room",
         "operationId": "",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "roomId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -253,16 +267,6 @@
         "summary": "Deletes the room",
         "description": "Deletes the specified room",
         "operationId": "",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "roomId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "204": {
             "$ref": "#/components/responses/204noContent"
@@ -288,23 +292,13 @@
         "summary": "Edit the room",
         "description": "allows to change the name and description of a specified room",
         "operationId": "",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "roomId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "requestBody": {
           "description": "Parameters to change for the room",
           "required": true,
           "content": {
             "application/x-www-form-urlencoded": {
               "schema": {
-                "$ref": "#/components/schemas/patchRoom"
+                "$ref": "#/components/schemas/patchNameOrDescription"
               }
             }
           }
@@ -322,6 +316,241 @@
         },
         "tags": [
           "rooms"
+        ]
+      }
+    },
+    "/functions": {
+      "get": {
+        "summary": "Lists all functions",
+        "description": "Lists all functions and its channels",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/functions"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500internal"
+          }
+        },
+        "tags": [
+          "functions"
+        ]
+      },
+      "post": {
+        "summary": "Create a new function",
+        "description": "Creates a new function",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/function"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400badRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/500internal"
+          }
+        },
+        "tags": [
+          "functions"
+        ]
+      }
+    },
+    "/functions/{functionId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "functionId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get a specific function",
+        "description": "Returns the specified function",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/function"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          }
+        },
+        "tags": [
+          "functions"
+        ]
+      },
+      "delete": {
+        "summary": "Deletes the function",
+        "description": "Deletes the specified function",
+        "operationId": "",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204noContent"
+          },
+          "400": {
+            "$ref": "#/components/responses/400badRequest"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500internal"
+          }
+        },
+        "tags": [
+          "functions"
+        ]
+      },
+      "patch": {
+        "summary": "Edit the function",
+        "description": "allows to change the name and description of a specified function",
+        "operationId": "",
+        "requestBody": {
+          "description": "Parameters to change for the function",
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/patchNameOrDescription"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204noContent"
+          },
+          "400": {
+            "$ref": "#/components/responses/400badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          }
+        },
+        "tags": [
+          "functions"
+        ]
+      }
+    },
+    "/programs": {
+      "get": {
+        "summary": "Lists all programs",
+        "description": "Lists all available programs",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "programs": {
+                      "$ref": "#/components/schemas/programs"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "programs"
+        ]
+      }
+    },
+    "/programs/{programId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "programId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get a specific program",
+        "description": "Returns the information about a specific program",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/program"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          }
+        },
+        "tags": [
+          "programs"
+        ]
+      },
+      "post": {
+        "summary": "Runs the program",
+        "description": "Executes the program. It does not return any output from the program.",
+        "operationId": "",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204noContent"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          }
+        },
+        "tags": [
+          "programs"
+        ]
+      },
+      "delete": {
+        "summary": "Deletes the program",
+        "description": "Deletes the specified program. This cannot be undone.",
+        "operationId": "",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204noContent"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          }
+        },
+        "tags": [
+          "programs"
         ]
       }
     },
@@ -504,7 +733,35 @@
           }
         }
       },
-      "patchRoom": {
+      "functions": {
+        "type": "object",
+        "properties": {
+          "functions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/function"
+            }
+          }
+        }
+      },
+      "function": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "channels": {
+            "$ref": "#/components/schemas/channels"
+          }
+        }
+      },
+      "patchNameOrDescription": {
         "type": "object",
         "properties": {
           "name": {
@@ -529,6 +786,38 @@
           },
           "name": {
             "type": "string"
+          }
+        }
+      },
+      "programs": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/program"
+        }
+      },
+      "program": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "timestampLastExecuted": {
+            "type": "integer"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "canOperate": {
+            "type": "boolean"
           }
         }
       }

@@ -8,10 +8,9 @@ set hm_script {
     string ERROR = "CODE 404 STATUS {Not found} MESSAGE {No channel with ID '" # sChannelId # "' found}";
     quit;
   }
-
-  string INVALID_ID = "65535";
 }
 
+append hm_script [file::load "operations/channels/channelConsts.hms"]
 append hm_script [file::load "operations/channels/channel.hms"]
 
 if {0 != [regexp $operation(REGEXP) $resource path id]} {

@@ -5,7 +5,7 @@ set template {
   string sChannelId;
   string sDPID;
 
-  string INVALID_ID = "65535";
+  !< templateConsts >!
 
   WriteLine("{ \"channels\" : " # '[');
 
@@ -27,6 +27,7 @@ set template {
 
 }
 
+set vars(templateConsts) [file::load "operations/channels/channelConsts.hms"]
 set vars(templateChannel) [file::load "operations/channels/channel.hms"]
 set hm_script [file::processTemplate $template vars]
 
