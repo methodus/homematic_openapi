@@ -23,8 +23,9 @@ set template {
   }
 }
 
-set vars(templateRoom) [file::load "operations/rooms/room.hms"]
-set hm_script [file::processTemplate $template vars]
+set vars1(templateChannels) [hmscript_channels]
+set vars2(templateRoom) [file::processTemplate [file::load "operations/rooms/room.hms"] vars1]
+set hm_script [file::processTemplate $template vars2]
 
 if { [catch { array set postData [httptool::request::parsePost] } error ] } {
   error [openapi::createError 400 "Bad request" "Invalid data: $error"]

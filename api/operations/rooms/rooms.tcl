@@ -1,6 +1,8 @@
 #!/bin/tclsh
 
-set templateRooms {
+source operations/channels/channelScripts.tcl
+
+set template {
   object oRoom;
   string sRoomId;
   string sRoomName;
@@ -19,7 +21,8 @@ set templateRooms {
   WriteLine("}");
 }
 
-set vars(templateRoom) [file::load "operations/rooms/room.hms"]
-set hm_script [file::processTemplate $templateRooms vars]
+set vars1(templateChannels) [hmscript_channels]
+set vars2(templateRoom) [file::processTemplate [file::load "operations/rooms/room.hms"] vars1]
+set hm_script [file::processTemplate $template vars2]
 
 httptool::response::send [hmscript::run $hm_script]

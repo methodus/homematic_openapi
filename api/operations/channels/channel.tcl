@@ -1,17 +1,8 @@
 #!/bin/tclsh
 
-set hm_script {
+source operations/channels/channelScripts.tcl
 
-  object oChannel = dom.GetObject(sChannelId);
-
-  if (oChannel.TypeName() != "CHANNEL") {
-    string ERROR = "CODE 404 STATUS {Not found} MESSAGE {No channel with ID '" # sChannelId # "' found}";
-    quit;
-  }
-}
-
-append hm_script [file::load "operations/channels/channelConsts.hms"]
-append hm_script [file::load "operations/channels/channel.hms"]
+set hm_script [hmscript_channel]
 
 if {0 != [regexp $operation(REGEXP) $resource path id]} {
   set args(sChannelId) $id

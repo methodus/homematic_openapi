@@ -4,24 +4,7 @@ WriteLine("\"description\" : \"" # oRoom.EnumInfo() # "\"," );
 WriteLine("\"id\" : \"" # oRoom.ID() # "\"," );
 WriteLine("\"type\" : \"" # oRoom.EnumType() # "\"," );
 
-WriteLine("\"channels\" : " # '[');
+var aChannelIds = oRoom.EnumUsedIDs();
+!< templateChannels >!
 
-string sChannelId;
-boolean bFirstChannel = true;
-foreach (sChannelId, oRoom.EnumUsedIDs()) {
-  object oChannel = dom.GetObject(sChannelId);
-
-  if (!bFirstChannel) {
-    WriteLine(",");
-  } else {
-    bFirstChannel = false;
-  }
-
-  WriteLine("{");
-  WriteLine("\"name\" : \"" # oChannel.Name() # "\"," );
-  WriteLine("\"id\" : \"" # sChannelId # "\"" );
-  WriteLine("}");
-}
-
-WriteLine("]");
 WriteLine("}");

@@ -1,5 +1,7 @@
 #!/bin/tclsh
 
+source operations/channels/channelScripts.tcl
+
 set hm_script {
   object oRoom;
   string sRoomName;
@@ -13,7 +15,8 @@ set hm_script {
   }
 }
 
-append hm_script [file::load "operations/rooms/room.hms"]
+set vars(templateChannels) [hmscript_channels]
+append hm_script [file::processTemplate [file::load "operations/rooms/room.hms"] vars]
 
 if {0 != [regexp $operation(REGEXP) $resource path id]} {
   set args(sRoomId) $id

@@ -3,6 +3,11 @@ load tclrega.so
 
 namespace eval hmscript {
 
+  proc createFlag { varname flag } {
+    if { $flag != 0 } then { set bFlag true } else { set bFlag false }
+    return "boolean $varname = $bFlag;\n"
+  }
+
   proc run { script { p_args - }} {
     if { "-" != $p_args } then {
       upvar $p_args args

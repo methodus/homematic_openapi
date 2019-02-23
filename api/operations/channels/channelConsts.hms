@@ -1,3 +1,0 @@
-string INVALID_ID = "65535";
-integer DIR_SENDER      = 1;
-integer DIR_RECEIVER    = 2;
