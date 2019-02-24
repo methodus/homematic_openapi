@@ -11,7 +11,20 @@ sourceOnce tools/openapi.tcl
 sourceOnce tools/hmscript.tcl
 
 if { [catch {
-  set resource [httptool::request::resourcePath]
+  array set queryArgs [httptool::request::parseQuery]
+  
+  set resource /$queryArgs(resource)
+
+  set flatten 0
+  if { [info exists queryArgs(flatten)] } {
+    set flatten queryArgs(flatten)
+  }
+
+  set withState 0
+  if { [info exists queryArgs(withState)] } {
+    set withState queryArgs(withState)
+  }
+
   set method   [httptool::request::method]
 
   openapi::loadOperations operations.conf
