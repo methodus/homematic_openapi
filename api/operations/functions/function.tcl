@@ -1,24 +1,10 @@
 #!/bin/tclsh
 
-set hm_script {
-  object oFunction;
-  string sFunctionName;
-  string sChannelId;
-
-  oFunction = dom.GetObject(sFunctionId);
-
-  if (oFunction.EnumType() != etFunction) {
-    string ERROR = "CODE 404 STATUS {Not found} MESSAGE {No function with ID '" # sFunctionId # "' found}";
-    quit;
-  }
-}
-
-append hm_script [file::load "operations/functions/function.hms"]
+source operations/functions/functionScripts.tcl
 
 if {0 != [regexp $operation(REGEXP) $resource path id]} {
-  set args(sFunctionId) $id
-  set output [hmscript::run $hm_script args]
-  httptool::response::send $output
+  set hmscript [hmscript_function $id $flatten $withState]
+  httptool::response::send [hmscript::run $hmscript]
 } else {
   error [openapi::createError 400 "Bad request" "Invalid resource request: $resource"]
 }
