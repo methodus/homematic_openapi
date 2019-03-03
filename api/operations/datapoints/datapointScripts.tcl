@@ -1,5 +1,22 @@
 #!/bin/tclsh
 
+proc hmscript_setDatapoint { id value } {
+  set hm_script {}
+  append hm_script "string sDPId = \"$id\";\n"
+  append hm_script {
+    object oDP = dom.GetObject(sDPId);
+    if (oDP.TypeName() != "HSSDP") {
+      string ERROR = "CODE 404 STATUS {Not found} MESSAGE {No datapoint with ID '" # sDPId # "' found}";
+      quit;
+    }
+  }
+  append hm_script "oDP.State('$value');\n"
+
+  append hm_script [hmscript_dp_ 1]
+
+  return $hm_script
+}
+
 proc hmscript_datapoints { withState } {
   set template {
     string sDPId;
@@ -21,8 +38,9 @@ proc hmscript_datapoints { withState } {
   return $hm_script
 }
 
-proc hmscript_datapoint { withState } {
-  set hm_script {
+proc hmscript_datapoint { id withState } {
+  set hm_script "string sDPId = \"$id\";\n"
+  append hm_script {
     object oDP = dom.GetObject(sDPId);
     if (oDP.TypeName() != "HSSDP") {
       string ERROR = "CODE 404 STATUS {Not found} MESSAGE {No datapoint with ID '" # sDPId # "' found}";

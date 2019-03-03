@@ -33,10 +33,29 @@ proc hmscript_channel_ { flatten withState } {
     if (DIR_SENDER   == iChnDir) { sChnDir = "SENDER";   }
     if (DIR_RECEIVER == iChnDir) { sChnDir = "RECEIVER"; }
     WriteLine("\"direction\" : \"" # sChnDir # "\"," );
-    Write("\"address\" : \"" # oChannel.Address() # "\"" );
+    WriteLine("\"address\" : \"" # oChannel.Address() # "\"," );
+    WriteLine("\"visible\" : " # oChannel.Visible() # "," );
+
+    string  sChnPartnerId = oChannel.ChnGroupPartnerId();
+    if (INVALID_ID == sChnPartnerId) { 
+      WriteLine("\"partner\" : null," );
+    } else {
+      WriteLine("\"partner\" : \"" # sChnPartnerId # "\"," );
+    }
+
+    boolean bChnAESAvailable = false;
+    if (0 != oChannel.ChnAESOperation()) { bChnAESAvailable = true; }
+    WriteLine("\"AESavailable\" : " # bChnAESAvailable # "," );
+
+    string sChnMode = "DEFAULT";
+    if (true == oChannel.ChnAESActive()) { sChnMode = "AES"; }
+    WriteLine("\"transmissionMode\" : \"" # sChnMode # "\"," );
+    
+    boolean canOperate = oChannel.UserAccessRights(iulOtherThanAdmin) == iarFullAccess;
+    Write("\"canOperate\" : " # canOperate);
 
     if (flatten) {
-      WriteLine(",")
+      WriteLine(",");
       var aDPIds = oChannel.DPs().EnumUsedIDs();
       !< templateDPs >!
     }

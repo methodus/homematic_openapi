@@ -1,23 +1,10 @@
 #!/bin/tclsh
 
-set hm_script {
-
-  object oDevice = dom.GetObject(sDeviceId);
-
-  if (oDevice.TypeName() != "DEVICE") {
-    string ERROR = "CODE 404 STATUS {Not found} MESSAGE {No device with ID '" # sDeviceId # "' found}";
-    quit;
-  }
-
-  boolean bFirstDevice = true;
-}
-
-append hm_script [file::load "operations/devices/device.hms"]
+source operations/devices/deviceScripts.tcl
 
 if {0 != [regexp $operation(REGEXP) $resource path id]} {
-  set args(sDeviceId) $id
-  set output [hmscript::run $hm_script args]
-  httptool::response::send $output
+  set hm_script [hmscript_device $id $flatten $withState]
+  httptool::response::send [hmscript::run $hm_script]
 } else {
   error [openapi::createError 400 "Bad request" "Invalid resource request: $resource"]
 }

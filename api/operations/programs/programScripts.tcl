@@ -50,6 +50,8 @@ proc hmscript_program { } {
   }
 
   append hm_script [hmscript_program_]
+
+  return $hm_script
 }
 
 proc hmscript_programs { } {
@@ -79,7 +81,7 @@ proc hmscript_programs { } {
   }
 
   array set vars {}
-  set vars(templateProgram) [hmscript_program]
+  set vars(templateProgram) [hmscript_program_]
   set hm_script [file::processTemplate $template vars]
 
   return $hm_script

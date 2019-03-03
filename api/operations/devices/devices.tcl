@@ -1,23 +1,7 @@
 #!/bin/tclsh
 
-set template {
-  WriteLine("{ \"devices\" : " # '[');
+source operations/devices/deviceScripts.tcl
 
-  string sDeviceId;
-  boolean bFirstDevice = true;
-  foreach (sDeviceId, root.Devices().EnumUsedIDs()) {
-    object oDevice = dom.GetObject(sDeviceId);
+set hm_script [hmscript_devices $flatten $withState]
 
-    !< templateDevice >!
-  }
-
-  WriteLine("]");
-  WriteLine("}");
-
-}
-
-set vars(templateDevice) [file::load "operations/devices/device.hms"]
-set hm_script [file::processTemplate $template vars]
-
-set output [hmscript::run $hm_script]
-httptool::response::send $output
+httptool::response::send [hmscript::run $hm_script]
