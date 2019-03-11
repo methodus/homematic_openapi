@@ -21,15 +21,19 @@ namespace eval openapi {
     return $error
   }
 
-  proc matchResourcePath { path } {
+  proc findOperation { path method } {
     variable operations
     foreach name [array names operations] {
       if { 0 != [string match $name $path] } {
-        return $operations($name)
+        array set operation $operations($name)
+        if { ![info exists operation($method)] } {
+          return -code error [createError 405 "Method Not Allowed" "$method not allowed for $path"]
+        }
+        return $operation($method)
       }
     }
 
-    return -code error [createError 400 "Bad request" "Operation for $path not found"]
+    return -code error [createError 400 "Bad request" "Operation for $method $path not found"]
   }
 
 }

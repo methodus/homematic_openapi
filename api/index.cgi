@@ -9,28 +9,38 @@ sourceOnce tools/json.tcl
 sourceOnce tools/http.tcl
 sourceOnce tools/openapi.tcl
 sourceOnce tools/hmscript.tcl
+sourceOnce tools/session.tcl
 
 if { [catch {
+  openapi::loadOperations operations.conf
+
   array set queryArgs [httptool::request::parseQuery]
-  
-  set resource /$queryArgs(resource)
+
+  if { [catch { array set cookieData [httptool::request::parseCookies] } error ] } {
+      error [openapi::createError 400 "Bad request" "Invalid data: $error"]
+  }
 
   set flatten 0
   if { [info exists queryArgs(flatten)] } {
-    set flatten queryArgs(flatten)
+    set flatten $queryArgs(flatten)
   }
 
   set withState 0
   if { [info exists queryArgs(withState)] } {
-    set withState queryArgs(withState)
+    set withState $queryArgs(withState)
   }
 
+  set resource /$queryArgs(resource)
   set method   [httptool::request::method]
+  array set operation [openapi::findOperation $resource $method]
 
-  openapi::loadOperations operations.conf
+  set SID ""
+  if { [info exists cookieData(SID)] } {
+    set SID $cookieData(SID)
+  }
+  session_checkPermissions $SID $operation(PERMS)
 
-  array set operation [openapi::matchResourcePath $resource]
-  source [file join "operations/" "$operation($method).tcl"]
+  source [file join "operations/" "$operation(SCRIPT).tcl"]
 } err ] } {
   if { [catch { array set errDetails $err } err2] || 0 == [info exists errDetails(CODE)] } {
     set code 500

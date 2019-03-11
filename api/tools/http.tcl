@@ -14,11 +14,23 @@ namespace eval httptool {
         set pairs [split $input &]
         foreach pair $pairs {
           if {0 != [regexp "^(\[^=]*)=(.*)$" $pair dummy varname val]} {
-            lappend list $varname $val
+            lappend list $varname [_urlDecode $val]
           }
         }
       }
       return $list
+    }
+
+    proc _urlDecode { str } {
+        # rewrite "+" back to space
+        # protect \ from quoting another '\'
+        set str [string map [list + { } "\\" "\\\\"] $str]
+
+        # prepare to process all %-escapes
+        regsub -all -- {%([A-Fa-f0-9][A-Fa-f0-9])} $str {\\u00\1} str
+
+        # process \u unicode mapped chars
+        return [subst -novar -nocommand $str]
     }
 
     ##
@@ -32,6 +44,14 @@ namespace eval httptool {
       set list {}
       catch {
         set list [_parseUrlEncodedParameters [read stdin $::env(CONTENT_LENGTH)]]
+      }
+      return $list
+    }
+
+    proc parseCookies { } {
+      set list {}
+      catch {
+        set list [_parseUrlEncodedParameters $::env(HTTP_COOKIE)]
       }
       return $list
     }
