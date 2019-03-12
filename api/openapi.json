@@ -15,32 +15,48 @@
   },
   "tags": [
     {
-      "name": "devices",
-      "description": "Everything about your Homematic Devices"
-    },
-    {
       "name": "channels",
       "description": "Everything about the channels"
+    },
+    {
+      "name": "datapoints",
+      "description": "View or change data point values"
+    },
+    {
+      "name": "devices",
+      "description": "Everything about your Homematic Devices"
     },
     {
       "name": "favorites",
       "description": "Manage your favorite channels"
     },
     {
-      "name": "rooms",
-      "description": "Manage your room devices"
-    },
-    {
       "name": "functions",
       "description": "Manage your device functions"
+    },
+    {
+      "name": "general",
+      "description": "General operations"
+    },
+    {
+      "name": "notifications",
+      "description": "System notifications"
     },
     {
       "name": "programs",
       "description": "Programs and Scripts on the CCU"
     },
     {
-      "name": "general",
-      "description": "General operations"
+      "name": "rooms",
+      "description": "Manage your room devices"
+    },
+    {
+      "name": "session",
+      "description": "Session management"
+    },
+    {
+      "name": "sysvars",
+      "description": "System variables and alarms"
     }
   ],
   "servers": [
@@ -55,7 +71,61 @@
       }
     }
   ],
+  "security": [
+    {
+      "cookieAuth": []
+    }
+  ],
   "paths": {
+    "/login": {
+      "post": {
+        "summary": "Login to the homematic CCU",
+        "description": "Login to the homematic CCU and return a session token",
+        "operationId": "",
+        "security": [],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/login"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/login"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          }
+        },
+        "tags": [
+          "session",
+          "general"
+        ]
+      }
+    },
+    "/logout": {
+      "post": {
+        "summary": "Logout from the homematic CCU",
+        "description": "Logout from the homematic CCU and remove the session token",
+        "operationId": "",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204noContent"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          }
+        },
+        "tags": [
+          "session",
+          "general"
+        ]
+      }
+    },
     "/devices": {
       "get": {
         "summary": "Lists all devices",
@@ -72,6 +142,12 @@
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
           "500": {
             "$ref": "#/components/responses/500internal"
           }
@@ -82,20 +158,20 @@
       }
     },
     "/devices/{deviceId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "deviceId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "get": {
         "summary": "Get specific device",
         "description": "Gets all information about a specific device",
         "operationId": "",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "deviceId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -106,10 +182,66 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500internal"
           }
         },
         "tags": [
           "devices"
+        ]
+      }
+    },
+    "/datapoint/{dpId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "dpId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Sets the state for the specific datapoint",
+        "description": "Sets the state for the specific datapoint of the corresponding device",
+        "operationId": "",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/setDatapoint"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/datapoint"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          }
+        },
+        "tags": [
+          "datapoints"
         ]
       }
     },
@@ -133,6 +265,12 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
           }
         },
         "tags": [
@@ -141,20 +279,20 @@
       }
     },
     "/channels/{channelId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "channelId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "get": {
         "summary": "All information about a specific channel",
         "description": "Returns all information about a specific channel",
         "operationId": "",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "channelId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -168,6 +306,12 @@
           },
           "400": {
             "$ref": "#/components/responses/400badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
           },
           "404": {
             "$ref": "#/components/responses/404notFound"
@@ -194,6 +338,12 @@
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
           "500": {
             "$ref": "#/components/responses/500internal"
           }
@@ -206,19 +356,21 @@
         "summary": "Create a new room",
         "description": "Creates a new room",
         "operationId": "",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createElement"
+        },
         "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/room"
-                }
-              }
-            }
+          "201": {
+            "$ref": "#/components/responses/201created"
           },
           "400": {
             "$ref": "#/components/responses/400badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
           },
           "500": {
             "$ref": "#/components/responses/500internal"
@@ -255,6 +407,12 @@
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
           "404": {
             "$ref": "#/components/responses/404notFound"
           }
@@ -273,6 +431,9 @@
           },
           "400": {
             "$ref": "#/components/responses/400badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
           },
           "403": {
             "$ref": "#/components/responses/403forbidden"
@@ -293,15 +454,7 @@
         "description": "allows to change the name and description of a specified room",
         "operationId": "",
         "requestBody": {
-          "description": "Parameters to change for the room",
-          "required": true,
-          "content": {
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "$ref": "#/components/schemas/patchNameOrDescription"
-              }
-            }
-          }
+          "$ref": "#/components/requestBodies/editNameOrDescription"
         },
         "responses": {
           "204": {
@@ -309,6 +462,12 @@
           },
           "400": {
             "$ref": "#/components/responses/400badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
           },
           "404": {
             "$ref": "#/components/responses/404notFound"
@@ -335,6 +494,12 @@
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
           "500": {
             "$ref": "#/components/responses/500internal"
           }
@@ -347,19 +512,21 @@
         "summary": "Create a new function",
         "description": "Creates a new function",
         "operationId": "",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createElement"
+        },
         "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/function"
-                }
-              }
-            }
+          "201": {
+            "$ref": "#/components/responses/201created"
           },
           "400": {
             "$ref": "#/components/responses/400badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
           },
           "500": {
             "$ref": "#/components/responses/500internal"
@@ -396,6 +563,12 @@
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
           "404": {
             "$ref": "#/components/responses/404notFound"
           }
@@ -414,6 +587,9 @@
           },
           "400": {
             "$ref": "#/components/responses/400badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
           },
           "403": {
             "$ref": "#/components/responses/403forbidden"
@@ -434,15 +610,7 @@
         "description": "allows to change the name and description of a specified function",
         "operationId": "",
         "requestBody": {
-          "description": "Parameters to change for the function",
-          "required": true,
-          "content": {
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "$ref": "#/components/schemas/patchNameOrDescription"
-              }
-            }
-          }
+          "$ref": "#/components/requestBodies/editNameOrDescription"
         },
         "responses": {
           "204": {
@@ -450,6 +618,12 @@
           },
           "400": {
             "$ref": "#/components/responses/400badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
           },
           "404": {
             "$ref": "#/components/responses/404notFound"
@@ -480,6 +654,12 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
           }
         },
         "tags": [
@@ -513,6 +693,12 @@
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
           "404": {
             "$ref": "#/components/responses/404notFound"
           }
@@ -529,6 +715,12 @@
           "204": {
             "$ref": "#/components/responses/204noContent"
           },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
           "404": {
             "$ref": "#/components/responses/404notFound"
           }
@@ -544,6 +736,12 @@
         "responses": {
           "204": {
             "$ref": "#/components/responses/204noContent"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
           },
           "404": {
             "$ref": "#/components/responses/404notFound"
@@ -570,6 +768,12 @@
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
           "500": {
             "$ref": "#/components/responses/500internal"
           }
@@ -584,6 +788,7 @@
         "summary": "Gets the version of the API",
         "description": "Gets the current version of this addon and its corresponding API",
         "operationId": "",
+        "security": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -600,27 +805,440 @@
           "general"
         ]
       }
+    },
+    "/env": {
+      "get": {
+        "summary": "Gets environment variables for a GET request",
+        "description": "Gets the current environment variables for the request. This operation is primarily for debugging purposes. It returns also the CGI variables which contain the values for cookies or query parameters.",
+        "operationId": "",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "general"
+        ]
+      },
+      "post": {
+        "summary": "Gets environment variables for a POST request",
+        "description": "Gets the current environment variables for the request. This operation is primarily for debugging purposes. It returns also the CGI variables which contain the values for cookies or POST parameters.",
+        "operationId": "",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "general"
+        ]
+      }
+    },
+    "/notifications": {
+      "get": {
+        "summary": "Get all system notifications",
+        "description": "Returns all current system notifications if any",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/notifications"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          }
+        },
+        "tags": [
+          "notifications"
+        ]
+      },
+      "delete": {
+        "summary": "Delete / confirm all non-sticky notifications",
+        "description": "Deletes / confirms all non-sticky system notifications",
+        "operationId": "",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204noContent"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          }
+        },
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/notifications/{notificationId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "notificationId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "delete": {
+        "summary": "Delete / confirm a non-sticky notification",
+        "description": "Deletes / confirms a non-sticky system notification",
+        "operationId": "",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204noContent"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          }
+        },
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/sysvars": {
+      "get": {
+        "summary": "Get all system variables",
+        "description": "Returns all system variables",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          }
+        },
+        "tags": [
+          "sysvars"
+        ]
+      },
+      "post": {
+        "summary": "Creates a new system variable",
+        "description": "Creates a new system variable",
+        "operationId": "",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/createSysvar"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/201created"
+          },
+          "400": {
+            "$ref": "#/components/responses/400badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          }
+        },
+        "tags": [
+          "sysvars"
+        ]
+      }
+    },
+    "/sysvars/{sysvarId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "sysvarId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get a specific system variable",
+        "description": "Returns the specific system variable",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          }
+        },
+        "tags": [
+          "sysvars"
+        ]
+      },
+      "post": {
+        "summary": "Sets the value of the system variavble",
+        "description": "Sets the value of the system variable",
+        "operationId": "",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204noContent"
+          },
+          "400": {
+            "$ref": "#/components/responses/400badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          }
+        },
+        "tags": [
+          "sysvars"
+        ]
+      },
+      "patch": {
+        "summary": "Changes the properties of a system variable",
+        "description": "Changes the properties of a system variable. This allows to modify the type and valid values of a variable\n",
+        "operationId": "",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204noContent"
+          },
+          "400": {
+            "$ref": "#/components/responses/400badRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          }
+        },
+        "tags": [
+          "sysvars"
+        ]
+      },
+      "delete": {
+        "summary": "Deletes a system variable",
+        "description": "Deletes a system variable from the homematic CCU",
+        "operationId": "",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204noContent"
+          },
+          "401": {
+            "$ref": "#/components/responses/401unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404notFound"
+          }
+        },
+        "tags": [
+          "sysvars"
+        ]
+      }
     }
   },
   "components": {
     "responses": {
+      "201created": {
+        "description": "Created<br><br> The resource has been created. Use the location header to request the newly created resource.\n"
+      },
       "204noContent": {
-        "description": "No Content"
+        "description": "No Content<br><br> The response does not contain any data.\n"
       },
       "400badRequest": {
-        "description": "Bad Request"
+        "description": "Bad Request<br><br> The request was misconfigured or contains wrong or invalid parameters. Please check the specification and try again.\n"
+      },
+      "401unauthorized": {
+        "description": "Unauthorized<br><br> You're not authorized. Please login or check your credentials.\n"
       },
       "403forbidden": {
-        "description": "Forbidden"
+        "description": "Forbidden<br><br> You don't have the permission to perform the request.\n"
       },
       "404notFound": {
-        "description": "Not Found"
+        "description": "Not Found<br><br> The requested resource or resource ID can't be found. \n"
       },
       "500internal": {
-        "description": "Internal Server Error"
+        "description": "Internal Server Error<br><br> The request stopped unexpectedly for instance when the server ran into an exception. This usually should not happen, so please report any occurences of these errors to the maintainer.\n"
+      }
+    },
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "SID"
+      }
+    },
+    "requestBodies": {
+      "login": {
+        "description": "Your login credentials",
+        "required": true,
+        "content": {
+          "application/x-www-form-urlencoded": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "editNameOrDescription": {
+        "description": "Parameters to change for the element",
+        "required": true,
+        "content": {
+          "application/x-www-form-urlencoded": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "setDatapoint": {
+        "description": "Sets the value of a data point",
+        "required": true,
+        "content": {
+          "application/x-www-form-urlencoded": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "createElement": {
+        "description": "Creates a new element",
+        "required": true,
+        "content": {
+          "application/x-www-form-urlencoded": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "createSysvar": {
+        "description": "Creates a new system variable or alarm",
+        "required": true,
+        "content": {
+          "application/x-www-form-urlencoded": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "channelId": {
+                  "type": "string"
+                },
+                "minValue": {
+                  "type": "integer"
+                },
+                "maxValue": {
+                  "type": "integer"
+                },
+                "trueString": {
+                  "type": "string"
+                },
+                "falseString": {
+                  "type": "string"
+                },
+                "valueList": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "schemas": {
+      "login": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          }
+        }
+      },
       "version": {
         "type": "object",
         "properties": {
@@ -657,6 +1275,12 @@
           },
           "interface": {
             "type": "string"
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/channel"
+            }
           }
         }
       },
@@ -761,17 +1385,6 @@
           }
         }
       },
-      "patchNameOrDescription": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          }
-        }
-      },
       "channels": {
         "type": "array",
         "items": {
@@ -785,6 +1398,71 @@
             "type": "string"
           },
           "name": {
+            "type": "string"
+          },
+          "deviceId": {
+            "type": "string"
+          },
+          "interface": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "partner": {
+            "type": "string"
+          },
+          "AESavailable": {
+            "type": "boolean"
+          },
+          "transmissionMode": {
+            "type": "string"
+          },
+          "canOperate": {
+            "type": "boolean"
+          },
+          "datapoints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/datapoint"
+            }
+          }
+        }
+      },
+      "datapoint": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "valueType": {
+            "type": "string"
+          },
+          "valueUnit": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "operations": {
             "type": "string"
           }
         }
@@ -818,6 +1496,34 @@
           },
           "canOperate": {
             "type": "boolean"
+          }
+        }
+      },
+      "notification": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      },
+      "notifications": {
+        "type": "object",
+        "properties": {
+          "notifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/notification"
+            }
           }
         }
       }
