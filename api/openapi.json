@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "description": "This is yet another Homematic API addon, which tries to provide as much as Web-UI functionalities.",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "title": "Homematic OpenAPI",
     "termsOfService": "https://apps.denis-loh.com",
     "contact": {
