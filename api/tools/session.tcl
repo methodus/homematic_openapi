@@ -71,6 +71,10 @@ proc session_logout { sid } {
 ##
 proc session_isValid { sid } {
 
+  if { ![regexp {^[\dA-Za-z]{10}$} $sid] } {
+    error [openapi::createError 401 "Unauthorized" "Invalid session id: $sid"]
+  }
+
   set    script "var _session_id_ = \"$sid\";"
   append script {
     var result = false;
